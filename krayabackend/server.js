@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 import products from './data/products.js';
+import ConnectDB from './config/db.js'
+
+ConnectDB();
+
 app.get('/', (req, res) => {
     res.send("Api is running");
 })
