@@ -9,7 +9,9 @@
     "start": "node krayabackend/server",
     "server": "nodemon krayabackend/server",
     "client": "npm start --prefix krayafrontend",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "data:import": "node krayabackend/seeder",
+    "data:destroy": "node krayabackend/seeder -d"
   },
   "repository": {
     "type": "git",
