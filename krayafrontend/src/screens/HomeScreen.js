@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Row } from 'react-bootstrap';
-import Product from '../components/Product'
+import Product from '../components/Product';
+import Loader from '../components/Loader';
+import ErrorMessage from '../components/ErrorMessage'
 // import axios from 'axios'
 // import products from "../products";
 
@@ -35,7 +37,7 @@ const HomeScreen = () => {
                 ))}
             </Row> */}
             <h1>Latest Products</h1>
-            {loading ? <h2>Loading...</h2> : error ? <h3>{error}</h3> :
+            {loading ? <Loader /> : error ? <ErrorMessage variant='danger'>{error}</ErrorMessage> :
                 <Row>
                     {products.map((product) => (
                         <Col key={product._id} sm={12} md={6} lg={4} xl={3}>
