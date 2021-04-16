@@ -5,7 +5,9 @@ const app = express();
 import ConnectDB from './config/db.js'
 import productRoutes from './routes/productRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js'
+
 ConnectDB();
+app.use(express.json())
 
 app.get('/', (req, res) => {
     res.send("Api is running");
