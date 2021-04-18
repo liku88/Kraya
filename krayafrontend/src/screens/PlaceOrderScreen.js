@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap"
 import { useDispatch, useSelector } from 'react-redux'
 import ErrorMessage from "../components/ErrorMessage"
 import CheckoutStep from '../components/CheckoutStep'
 import { Link } from 'react-router-dom'
+import { createOrder } from '../actions/orderActions'
 
-const PlaceOrderScreen = () => {
+const PlaceOrderScreen = ({ history }) => {
+
+
+    const dispatch = useDispatch()
 
     const cart = useSelector((state) => state.cart);
     const { shippingAddress } = cart
@@ -25,8 +29,26 @@ const PlaceOrderScreen = () => {
 
     cart.totalPrice = roundToTwo(Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice))
 
+    const orderCreate = useSelector(state => state.orderCreate)
+    const { order, success, error } = orderCreate
+
+    useEffect(() => {
+        if (success) {
+            history.push(`/order/${order._id}`)
+        }
+        // eslint-disable-next-line
+    }, [history, success])
+
     const placeOrderHandler = () => {
-        console.log("Order");
+        dispatch(createOrder({
+            orderItems: cartItems,
+            shippingAddress: shippingAddress,
+            paymentMethod: paymentMethod,
+            itemsPrice: cart.itemsPrice,
+            shippingPrice: cart.shippingPrice,
+            taxPrice: cart.taxPrice,
+            totalPrice: cart.totalPrice
+        }))
     }
     return (
         <>
@@ -117,7 +139,9 @@ const PlaceOrderScreen = () => {
                                     <Col>${cart.totalPrice}</Col>
                                 </Row>
                             </ListGroup.Item>
-
+                            <ListGroup.Item>
+                                {error && <ErrorMessage variant='danger'>{error}</ErrorMessage>}
+                            </ListGroup.Item>
                             <ListGroup.Item>
                                 <Button type='button' className='btn-block' disabled={cartItems === 0} onClick={placeOrderHandler}>Place Order</Button>
                             </ListGroup.Item>
