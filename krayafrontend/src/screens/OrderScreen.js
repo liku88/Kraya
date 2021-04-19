@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Row, Col, ListGroup, Image, Card, Button } from "react-bootstrap"
 import { useDispatch, useSelector } from 'react-redux'
 import ErrorMessage from "../components/ErrorMessage"
@@ -11,11 +12,14 @@ const OrderScreen = ({ match }) => {
 
     const dispatch = useDispatch()
 
-
+    const [sdkReady, setSdkReady] = useState(false);
 
 
     const orderDetails = useSelector(state => state.orderDetails)
     const { loading, order, error } = orderDetails
+
+    const orderPay = useSelector(state => state.orderPay)
+    const { loading: loadingPay, success: successPay } = orderPay
 
     if (!loading) {
         //Calculating prices
@@ -35,8 +39,28 @@ const OrderScreen = ({ match }) => {
 
 
     useEffect(() => {
-        dispatch(getOrderDetails(orderId))
-    }, [dispatch, orderId])
+
+        const addPayPalScript = async () => {
+            const { data: clientId } = await axios.get('/api/config/paypal')
+            const script = document.createElement('script')
+            script.type = 'text/javascript'
+            script.async = true
+            script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
+            script.onload = () => {
+                setSdkReady(true)
+            }
+            document.body.appendChild(script)
+        }
+        if (!order || successPay) {
+            dispatch(getOrderDetails(orderId))
+        } else if (!order.isPaid) {
+            if (!window.paypal) {
+                addPayPalScript();
+            } else {
+                setSdkReady(true)
+            }
+        }
+    }, [dispatch, orderId, successPay, order])
 
     return (
         loading ? <Loader /> : error ? <ErrorMessage variant="danger">{error}</ErrorMessage> : (
