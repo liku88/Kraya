@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import ErrorMessage from "../components/ErrorMessage"
 import Loader from '../components/Loader'
 import { Link } from 'react-router-dom'
-import { getOrderDetails } from '../actions/orderActions'
+import { getOrderDetails, payOrder } from '../actions/orderActions'
+import { PayPalButton } from "react-paypal-button-v2"
+import { ORDER_PAY_RESET } from '../constants/orderConstant'
+
 
 const OrderScreen = ({ match }) => {
     const orderId = match.params.id;
@@ -52,6 +55,7 @@ const OrderScreen = ({ match }) => {
             document.body.appendChild(script)
         }
         if (!order || successPay) {
+            dispatch({ type: ORDER_PAY_RESET })
             dispatch(getOrderDetails(orderId))
         } else if (!order.isPaid) {
             if (!window.paypal) {
@@ -61,6 +65,11 @@ const OrderScreen = ({ match }) => {
             }
         }
     }, [dispatch, orderId, successPay, order])
+
+    const successPaymentHandler = (paymentResult) => {
+        console.log(paymentResult);
+        dispatch(payOrder(orderId, paymentResult))
+    }
 
     return (
         loading ? <Loader /> : error ? <ErrorMessage variant="danger">{error}</ErrorMessage> : (
@@ -158,6 +167,14 @@ const OrderScreen = ({ match }) => {
                                         <Col>${order.totalPrice}</Col>
                                     </Row>
                                 </ListGroup.Item>
+                                {!order.isPaid && (
+                                    <ListGroup.Item>
+                                        {loadingPay && <Loader />}
+                                        {!sdkReady ? <Loader /> : (
+                                            <PayPalButton amount={order.totalPrice} onSuccess={successPaymentHandler} />
+                                        )}
+                                    </ListGroup.Item>
+                                )}
                             </ListGroup>
                         </Card>
                     </Col>

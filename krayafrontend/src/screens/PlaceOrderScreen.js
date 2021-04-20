@@ -24,7 +24,7 @@ const PlaceOrderScreen = ({ history }) => {
 
     cart.itemsPrice = roundToTwo(cartItems.reduce((acc, item) => acc + item.price * item.qty, 0))
 
-    cart.shippingPrice = roundToTwo(cart.itemsPrice > 100 ? 0 : 100)
+    cart.shippingPrice = roundToTwo(cart.itemsPrice > 100 ? 0 : 0)
     cart.taxPrice = roundToTwo(Number((0.18 * cart.itemsPrice).toFixed(2)));
 
     cart.totalPrice = roundToTwo(Number(cart.itemsPrice) + Number(cart.shippingPrice) + Number(cart.taxPrice))
