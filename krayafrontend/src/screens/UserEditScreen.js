@@ -4,7 +4,8 @@ import { Form, Button, } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import ErrorMessage from '../components/ErrorMessage'
 import Loader from '../components/Loader'
-import { getUserDetails, } from '../actions/userActions'
+import { getUserDetails, updateUser } from '../actions/userActions'
+import { USER_UPDATE_RESET } from "../constants/userConstants"
 import FormComponent from '../components/FormComponent'
 
 
@@ -13,28 +14,37 @@ const UserEditScreen = ({ match, history }) => {
 
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
-    const [password, setPassword] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
     const dispatch = useDispatch();
-    const userDetails = useSelector((state) => state.userDetails)
 
+    const userDetails = useSelector((state) => state.userDetails)
     const { loading, user, error } = userDetails
+
+    const userUpdate = useSelector((state) => state.userUpdate)
+    const { loading: loadingUpdate, success: successUpdate, error: errorUpdate } = userUpdate
 
 
 
     useEffect(() => {
-        if (!user.name || user._id !== userId) {
-            dispatch(getUserDetails(userId))
+        if (successUpdate) {
+            dispatch({ type: USER_UPDATE_RESET })
+            history.push('/admin/userlist')
         } else {
-            setName(user.name);
-            setEmail(user.email);
-            setIsAdmin(user.isAdmin);
+            if (!user.name || user._id !== userId) {
+                dispatch(getUserDetails(userId))
+            } else {
+                setName(user.name);
+                setEmail(user.email);
+                setIsAdmin(user.isAdmin);
+            }
         }
-    }, [user, userId, dispatch])
+
+    }, [user, history, userId, dispatch, successUpdate])
 
     const submitHandler = (e) => {
         e.preventDefault();
+        dispatch(updateUser({ _id: userId, name, email, isAdmin }))
     }
 
     return (
@@ -44,6 +54,8 @@ const UserEditScreen = ({ match, history }) => {
         </Link>
             <FormComponent>
                 <h1>Update User Details</h1>
+                {loadingUpdate && <Loader />}
+                {errorUpdate && <ErrorMessage variant='danger'>{errorUpdate}</ErrorMessage>}
                 {loading ? <Loader /> : error ? <ErrorMessage variant='danger'>{error}</ErrorMessage> : (
                     <Form onSubmit={submitHandler}>
                         <Form.Group controlId='name'>
