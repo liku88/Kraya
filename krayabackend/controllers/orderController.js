@@ -86,5 +86,22 @@ const getOrders = asyncHandler(async (req, res) => {
     res.json(orders)
 })
 
+//@desc Update order to  delivered
+//@route Put /api/orders/:id/deliver
+//@access Private/Admin
 
-export { addOrderItems, getOrderById, updateOrderToPaid, getUserOrders, getOrders }
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id)
+    if (order) {
+        order.isDelivered = true
+        order.deliveredAt = Date.now()
+        const updatedOrder = await order.save();
+        res.json(updatedOrder)
+    } else {
+        res.status(404)
+        throw new Error('updated Order To paid failed');
+    }
+})
+
+
+export { addOrderItems, getOrderById, updateOrderToPaid, getUserOrders, getOrders, updateOrderToDelivered }
