@@ -16,9 +16,9 @@ const ProductScreen = ({ history, match }) => {
     const [qty, setQty] = useState(1);
 
     const dispatch = useDispatch();
-    const productDetailsList = useSelector(state => state.productDetailsList);
+    const productDetails = useSelector(state => state.productDetails);
 
-    const { loading, productDetail, error } = productDetailsList;
+    const { loading, productDetail, error } = productDetails;
 
     useEffect(() => {
         // const fetchProduct = async () => {
