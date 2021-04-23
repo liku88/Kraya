@@ -43,9 +43,13 @@ const ProductScreen = ({ history, match }) => {
             alert('Review Submitted!')
             setRating(0)
             setComment('')
+            // dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
+        }
+        if (!productDetail._id || productDetail._id !== match.params.id) {
+            dispatch(listProductDetails(match.params.id));
             dispatch({ type: PRODUCT_CREATE_REVIEW_RESET })
         }
-        dispatch(listProductDetails(match.params.id));
+
     }, [dispatch, match, successProductReview]);
 
     const addToCartHandler = () => {
@@ -65,7 +69,7 @@ const ProductScreen = ({ history, match }) => {
             <Link className='btn btn-light my-3' to="/">
                 Go Back
            </Link>
-            {loading ? <Loader /> : error ? <ErrorMessage variant='danger'>{error}</ErrorMessage> : (
+            {loading ? <Loader /> : error ? (<ErrorMessage variant='danger'>{error}</ErrorMessage>) : (
                 <>
                     <Row>
                         <Col md={6}>

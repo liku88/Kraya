@@ -5,6 +5,8 @@ import ErrorMessage from "../components/ErrorMessage"
 import CheckoutStep from '../components/CheckoutStep'
 import { Link } from 'react-router-dom'
 import { createOrder } from '../actions/orderActions'
+import { ORDER_CREATE_RESET } from '../constants/orderConstant'
+import { USER_DETAILS_RESET } from "../constants/userConstants"
 
 const PlaceOrderScreen = ({ history }) => {
 
@@ -15,6 +17,13 @@ const PlaceOrderScreen = ({ history }) => {
     const { shippingAddress } = cart
     const { paymentMethod } = cart
     const { cartItems } = cart
+
+
+    // if (!shippingAddress.address) {
+    //     history.push('/shipping')
+    // } else if (!paymentMethod) {
+    //     history.push('/payment')
+    // }
 
     //Calculating prices
 
@@ -35,9 +44,11 @@ const PlaceOrderScreen = ({ history }) => {
     useEffect(() => {
         if (success) {
             history.push(`/order/${order._id}`)
+            dispatch({ type: USER_DETAILS_RESET })
+            dispatch({ type: ORDER_CREATE_RESET })
         }
         // eslint-disable-next-line
-    }, [history, success])
+    }, [history, success, dispatch])
 
     const placeOrderHandler = () => {
         dispatch(createOrder({
