@@ -25,7 +25,7 @@ const HomeScreen = ({ match }) => {
         // fetchProducts()
 
         dispatch(listProducts(keyword));
-    }, [dispatch]);
+    }, [dispatch, keyword]);
     return (
         <>
             {/* <h1>Latest Products</h1>
