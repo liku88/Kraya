@@ -8,9 +8,12 @@ import ErrorMessage from '../components/ErrorMessage'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { listProducts } from '../actions/productActions'
+
 const HomeScreen = ({ match }) => {
     // const [products, setProducts] = useState([]);
     const keyword = match.params.keyword
+    const pageNumber = match.params.pageNumber || 1
+
     const dispatch = useDispatch()
     const productList = useSelector(state => state.productList);
     const { loading, products, error } = productList
@@ -24,8 +27,8 @@ const HomeScreen = ({ match }) => {
         // }
         // fetchProducts()
 
-        dispatch(listProducts(keyword));
-    }, [dispatch, keyword]);
+        dispatch(listProducts(keyword, pageNumber));
+    }, [dispatch, keyword, pageNumber]);
     return (
         <>
             {/* <h1>Latest Products</h1>
