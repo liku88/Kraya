@@ -9,6 +9,7 @@ import Paginate from '../components/Paginate'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { listProducts } from '../actions/productActions'
+import ProductCarousel from '../components/ProductCarousel';
 
 const HomeScreen = ({ match }) => {
     // const [products, setProducts] = useState([]);
@@ -40,6 +41,7 @@ const HomeScreen = ({ match }) => {
                     </Col>
                 ))}
             </Row> */}
+            {!keyword && <ProductCarousel />}
             <h1>Latest Products</h1>
             {loading ? (<Loader />) : error ? (<ErrorMessage variant='danger'>{error}</ErrorMessage>) :
                 (
